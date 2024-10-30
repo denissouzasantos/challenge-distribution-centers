@@ -2,6 +2,7 @@ package com.challenge.distribution.centers.controller;
 
 
 import com.challenge.distribution.centers.dto.OrderRequestDTO;
+import com.challenge.distribution.centers.dto.OrderResponseDTO;
 import com.challenge.distribution.centers.model.Order;
 import com.challenge.distribution.centers.service.OrderService;
 import lombok.AllArgsConstructor;
@@ -19,12 +20,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public Order processOrder(@RequestBody OrderRequestDTO orderRequest) {
+    public OrderResponseDTO processOrder(@RequestBody OrderRequestDTO orderRequest) {
         return orderService.processOrder(orderRequest);
     }
 
     @GetMapping
-    public List<Order> getAllOrders() {
+    public List<OrderResponseDTO> getAllOrders() {
         return orderService.getAllOrders();
     }
 

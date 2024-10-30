@@ -2,7 +2,9 @@ package com.challenge.distribution.centers.service;
 
 
 import com.challenge.distribution.centers.dto.DistributionCentersDTO;
+import com.challenge.distribution.centers.dto.ItemResponseDTO;
 import com.challenge.distribution.centers.dto.OrderRequestDTO;
+import com.challenge.distribution.centers.dto.OrderResponseDTO;
 import com.challenge.distribution.centers.model.Item;
 import com.challenge.distribution.centers.model.Order;
 import com.challenge.distribution.centers.repository.OrderRepository;
@@ -22,16 +24,36 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final DistributionCenterService distributionCenterService;
 
-    public Order processOrder(OrderRequestDTO order) {
+    public OrderResponseDTO processOrder(OrderRequestDTO order) {
         validateOrderItems(order);
 
-        Order orderItem = new Order();
+        Order orderItem = createOrder(order);
+        Order orderResponse = saveOrder(orderItem);
+        log.info("Order processed: {}", orderResponse);
+
+        return createOrderResponse(orderResponse);
+    }
+
+    private Order createOrder(OrderRequestDTO order) {
         List<Item> items = order.getItems().stream()
                 .map(this::createItem)
                 .collect(Collectors.toList());
+        Order orderItem = new Order();
         orderItem.setItems(items);
+        return orderItem;
+    }
 
+    private Order saveOrder(Order orderItem) {
         return orderRepository.save(orderItem);
+    }
+
+    private OrderResponseDTO createOrderResponse(Order orderResponse) {
+        OrderResponseDTO response = new OrderResponseDTO();
+        response.setOrderId(orderResponse.getId());
+        response.setItems(orderResponse.getItems().stream()
+                .map(item -> new ItemResponseDTO(item.getName(), item.getDistributionCenters()))
+                .collect(Collectors.toList()));
+        return response;
     }
 
     private void validateOrderItems(OrderRequestDTO order) {
@@ -43,20 +65,29 @@ public class OrderService {
         }
     }
 
-    private Item createItem(String itemId) {
-        DistributionCentersDTO distributionCenters = distributionCenterService.getDistributionCentersByItem(itemId);
+    private Item createItem(String requestItem) {
+        DistributionCentersDTO distributionCenters = distributionCenterService.getDistributionCentersByItem(requestItem);
         if (distributionCenters == null) {
-            throw new IllegalArgumentException("No distribution centers found for item " + itemId);
+            throw new IllegalArgumentException("No distribution centers found for requestItem " + requestItem);
         }
         log.info("Centers: {}", distributionCenters);
 
         Item item = new Item();
-        item.setId(itemId);
+        item.setName(requestItem);
         item.setDistributionCenters(distributionCenters.getDistributionCenters());
         return item;
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public List<OrderResponseDTO> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(order -> {
+                    OrderResponseDTO response = new OrderResponseDTO();
+                    response.setOrderId(order.getId());
+                    response.setItems(order.getItems().stream()
+                            .map(item -> new ItemResponseDTO(item.getName(), item.getDistributionCenters()))
+                            .collect(Collectors.toList()));
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 }
