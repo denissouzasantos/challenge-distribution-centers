@@ -56,7 +56,7 @@ public class OrderService {
         return response;
     }
 
-    private void validateOrderItems(OrderRequestDTO order) {
+    void validateOrderItems(OrderRequestDTO order) {
         if (order.getItems().isEmpty()) {
             throw new IllegalArgumentException("Order must have at least one item");
         }
@@ -65,7 +65,7 @@ public class OrderService {
         }
     }
 
-    private Item createItem(String requestItem) {
+    Item createItem(String requestItem) {
         DistributionCentersDTO distributionCenters = distributionCenterService.getDistributionCentersByItem(requestItem);
         if (distributionCenters == null) {
             throw new IllegalArgumentException("No distribution centers found for requestItem " + requestItem);

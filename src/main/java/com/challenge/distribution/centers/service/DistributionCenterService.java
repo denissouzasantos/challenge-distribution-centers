@@ -28,7 +28,4 @@ public class DistributionCenterService {
                 .body(DistributionCentersDTO.class);
     }
 
-    public List<DistributionCentersDTO> getMockList() {
-        return List.of(new DistributionCentersDTO(List.of("CD1", "CD2", "CD3")));
-    }
 }
