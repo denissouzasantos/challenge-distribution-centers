@@ -28,7 +28,10 @@ mvn spring-boot:run
 
 ### Run the Tests
 mvn test
+``` 
 
+## Endpoints
+```
 API Endpoints
 Process Order
 URL: /order
@@ -40,10 +43,10 @@ Request Body:
 Response:
 [
     {
-        "id": "672185dc3d00491b7241b521",
+        "orderId": "672185dc3d00491b7241b521",
         "items": [
             {
-                "id": "123",
+                "item": "123",
                 "distributionCenters": [
                     "CD1",
                     "CD2",
@@ -59,10 +62,10 @@ Method: GET
 Response:
 [
     {
-        "id": "672185dc3d00491b7241b521",
+        "orderId": "672185dc3d00491b7241b521",
         "items": [
             {
-                "id": "123",
+                "item": "123",
                 "distributionCenters": [
                     "CD1",
                     "CD2",
@@ -72,11 +75,11 @@ Response:
         ]
     }
 ]
-Get Distribution Centers by Item
-URL: /distributionCenters
-Method: GET
-Query Parameter: itemId
-Response:
-{
-  "distributionCenters": ["CD1", "CD2", "CD3"]
-}
+``` 
+## Mock API
+```
+
+This project uses a mock API for testing purposes. The mock API is hosted at https://distributioncenters.free.beeceptor.com.  
+Configuration
+The RestClient is configured to use the mock API base URL. You can find the configuration in the RestClientConfig class:
+``` 
